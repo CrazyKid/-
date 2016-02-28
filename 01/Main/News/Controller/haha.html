@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head id="Head1"><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="keywords" content="码迷,mamicode.com,互联网,软件开发,开源,asp,asp.net,android,apple,jsp,php,Windows,数据库,HTML,JS,CSS,技术文章,游戏,创业,手机相关" /><meta name="baidu-site-verification" content="TEj1q15lpz" /><meta name="description" content="一个UICollectionView有好多个cell，滑动一下，谁也不知道会停留在哪个cell，滑的快一点，就会多滑一段距离，反之则会滑的比较近，这正是UIScrollview用户体验好的地方。如果想要UICollectionView停留到某个cell的位置，可以用- (void)scrollToI..." /><title>
+	UIScrollView的delegate方法妙用之让UICollectionView滑动到某个你想要的位置
+</title><link href="css/css.css" type="text/css" rel="stylesheet" />
+<script src="/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script><link rel="stylesheet" type="text/css" href="/kindeditor416/plugins/code/prettify.css" />
+    <script type="text/javascript" charset="utf-8" src="/kindeditor416/plugins/code/prettify.js"></script>
+</head>
+<body>
+    <div class="width100bi height20px divbackgroundcolor">
+    <div class="width1000px divmargin0auto">
+        <div class="divfloatleft">
+        </div>
+        <div class="divfloatright">
+            <div id="logintopdescription" class="paddingtop3">
+            </div>
+        </div>
+        <div class="divfloatclear">
+        </div>
+    </div>
+</div>
+<div class="width1000px divmargin0auto margintop20bottom20">
+    <div class="width120px divfloatleft">
+        <a href="/" title="码迷，mamicode.com">
+            <img src="/img/logo.png" alt="码迷，mamicode.com" width="109" height="60" border="0" />
+        </a>
+    </div>
+    <div class="width880px divfloatright">
+        <div class="menuDiv">
+            <ul>
+                <li class="bottomline width10px">&nbsp;</li>
+                <li id="default-aspx" class="title0"><a href="/" title="码迷，mamicode.com">首页</a></li>
+                <li id="infolist-2" class="title1"><a href="/info-list-2-1.html" title="Web开发">Web开发</a></li>
+                <li id="infolist-3" class="title1"><a href="/info-list-3-1.html" title="Windows程序">Windows程序</a></li>
+                <li id="infolist-4" class="title1"><a href="/info-list-4-1.html" title="编程语言">编程语言</a></li>
+                <li id="infolist-5" class="title1"><a href="/info-list-5-1.html" title="数据库">数据库</a></li>
+                <li id="infolist-6" class="title1"><a href="/info-list-6-1.html" title="移动开发">移动开发</a></li>
+                <li id="infolist-8" class="title1"><a href="/info-list-8-1.html" title="系统相关">系统相关</a></li>
+                <li id="infolist-9" class="title1"><a href="/info-list-9-1.html" title="微信">微信</a></li>
+                <li id="infolist-11" class="title1"><a href="/info-list-11-1.html" title="其他好文">其他好文</a></li>
+                <li id="memberhtml" class="title1"><a href="/member.html" title="会员">会员</a></li>
+                <li class="bottomline width10px">&nbsp;</li>
+            </ul>
+        </div>
+    </div>
+    <div class="divfloatclear">
+    </div>
+</div>
+<div style="margin: 0px auto; width:1000px;" class="margintop10bottom10">
+    <script type="text/javascript">
+        var cpro_id = "u2192072";
+        (window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id] = { at: "3", rsi0: "1000", rsi1: "120", pat: "6", tn: "baiduCustNativeAD", rss1: "#FFFFFF", conBW: "1", adp: "1", ptt: "0", titFF: "%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91", titFS: "14", rss2: "#000000", titSU: "0", ptbg: "90", piw: "0", pih: "0", ptp: "0" }
+    </script>
+    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+</div>
+
+    <div class="divdaohang">
+        <div class="divtitlefont">
+            <a href="/" title="码迷首页">首页</a>
+            <span id="lbltitle"> > <a href='/infolist-11-1.html'>其他好文</a> > 详细</span>
+        </div>
+    </div>
+    <div class="divmain">
+        <div class="width70bi divfloatleft" style="min-height:2000px;">
+            <div class="marginright20">
+                <div class="divtextaligncenter">
+    <script type="text/javascript">
+        var cpro_id = "u2391650";
+        (window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id] = { at: "3", rsi0: "680", rsi1: "250", pat: "6", tn: "baiduCustNativeAD", rss1: "#FFFFFF", conBW: "1", adp: "1", ptt: "0", titFF: "%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91", titFS: "14", rss2: "#000000", titSU: "0", ptbg: "90", piw: "0", pih: "0", ptp: "0" }
+    </script>
+    <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+</div>
+
+                <div class="detailtitle divtextaligncenter divborderbottomdotted">
+                    <h1 id="Htitle" class="detailtitle">UIScrollView的delegate方法妙用之让UICollectionView滑动到某个你想要的位置</h1>
+                </div>
+                <div class="detail1 divtextaligncenter">
+                    时间：<span id="Label2" class="colorlv">2015-06-19 16:36:16</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp; 阅读：<span id="Label1" class="colorCheng">3129</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp; 评论：<span id="lblcommentcount" class="colorCheng">0</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp; 收藏：<span id="lblfavorite" class="colorCheng">0</span>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <a id="infofavorite" class="acursorpointer">[点我收藏+]</a>
+                </div>
+                
+                <div class="detailcontennt">
+                    <span id="Label3"><p>标签：</p><p><!--?xml version="1.0" encoding="UTF-8" standalone="no"?--></p>
+<div>一个UICollectionView有好多个cell，滑动一下，谁也不知道会停留在哪个cell，滑的快一点，就会多滑一段距离，反之则会滑的比较近，这正是UIScrollview用户体验好的地方。</div>
+<div>如果想要UICollectionView停留到某个cell的位置，可以用</div>
+<div>- (void)scrollToItemAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UICollectionViewScrollPosition)scrollPosition animated:(BOOL)animated;</div>
+<div>这个方法，还能用scrollPosition这个参数控制cell具体停留在上下左右中到底哪个位置。</div>
+<div>那么问题来了：如果我只是随便滑了一下，我也不知道它会停在位于哪个indexPath的cell上，但不管它停在哪个cell上，我都希望这个cell刚好在屏幕中间，应该怎么办呢？（这个场景在coverFlow的效果里比较常见）</div>
+<div>&nbsp;</div>
+<div><span style="font-family: Menlo;">之前知道的做法是：</span></div>
+<div><span style="font-family: Menlo;">在</span>scrollViewDidEndDecelerating或其他delegate方法里，通过当前 contentOffset 计算最近的整数页及其对应的 contentOffset，然后通过动画移动到这个位置。</div>
+<div>但是这个做法有问题，就是动画不连贯，完全没有&ldquo;刚好停到那里&rdquo;的感觉。</div>
+<div>&nbsp;</div>
+<div>今天在想有没有其他更好的办法时，突然发现一个之前从来没用功的方法：</div>
+<div>- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset NS_AVAILABLE_IOS(5_0);</div>
+<div>一看这参数名，再看看这文档，真是让人喜不自禁呐！这不就是让scrollView&ldquo;刚好停到某个位置&rdquo;的方法嘛！！！（系统5.0就提供了，现在才看到。。。。。。）</div>
+<div>targetContentOffset 是个指针，可以修改这个参数的值，让scrollView最终停止在目标位置。</div>
+<div>注意：scrollView的pagingEnable属性必须为NO时这个方法才会被调用。</div>
+<div>&nbsp;</div>
+<div>例：
+<div>- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {</div>
+</div>
+<div>&nbsp;&nbsp;&nbsp; CGPoint orifinalTargetContentOffset = CGPointMake(targetContentOffset-&gt;x, targetContentOffset-&gt;y);</div>
+<div>&nbsp;&nbsp;&nbsp; *targetContentOffset = [self&nbsp; itemCenterOffsetWithOriginalTargetContentOffset:orifinalTargetContentOffset];//计算出想要其停止的位置&nbsp;&nbsp;</div>
+<div>}</div>
+<div>这样scrollView就会逐渐减速，最终停止在itemCenterOffsetWithOriginalTargetContentOffset方法算出来的位置上了，效果杠杠的~</div>
+<div><img alt="技术分享" src="http://images0.cnblogs.com/blog2015/720810/201506/172327324209002.gif"  /></div>
+<div>&nbsp;</div>
+<div>本来以为这个方法没多少人知道，结果百度一搜，发现原来已经有大神写过详细的文章了（<a href="http://tech.glowing.com/cn/practice-in-uiscrollview/">http://tech.glowing.com/cn/practice-in-uiscrollview/</a>），这个就当记录一下吧</div>
+<div>&nbsp;</div>
+<div><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
+<div>另外发现一个直接用NSObject就实现类似效果的库：<a href="https://github.com/nicklockwood/iCarousel">https://github.com/nicklockwood/iCarousel</a> &nbsp; 乍看之下没看懂。。。等有空再仔细研究</div>
+<div>&nbsp;</div>
+<div>更新(2015-06-19)</div>
+<div>原来UICollectionViewLayout已经提供了两个方法可以实现这个功能：</div>
+<div>- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset withScrollingVelocity:(CGPoint)velocity;</div>
+<div>- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset NS_AVAILABLE_IOS(7_0);</div>
+<div>效果与上面的delegate方法完全一样，不过这个是UICollectionViewLayout的方法，需要在自己的layout子类里重载。</div>
+<div>好处是：这样就不用再在viewController里写scrollView的delegate方法了，viewController更加简洁；跟布局相关的代码都转移到了layout的类中&nbsp;</div>
+&nbsp;</div><p><a href="http://www.mamicode.com/info-detail-872795.html" title="UIScrollView的delegate方法妙用之让UICollectionView滑动到某个你想要的位置,mamicode.com" style="color:#ffffff"  target="_blank">UIScrollView的delegate方法妙用之让UICollectionView滑动到某个你想要的位置</a></p><p>标签：</p></span>
+                </div>
+                <div id="divcomment">
+                    <div>
+                        <div class=" divtextaligncenter">
+                            <div class="detailcai" id="infono">
+                                <div class="detailcai1 colorboldlan">
+                                    踩</div>
+                                <div class="detailcai2 colorboldlan">
+                                    (<span id="spanNo">0</span>)</div>
+                            </div>
+                            <div class="detailzan" id="infoyes">
+                                <div class="detailzan1 colorboldHong">
+                                    赞</div>
+                                <div class="detailzan2 colorboldHong">
+                                    (<span id="spanYes">2</span>)</div>
+                            </div>
+                            <div class="divfloatclear">
+                            </div>
+                        </div>
+                        <div class="divtextalignright margintop10">
+                            <div class="width100bi paddingleft10right10">
+                                <span id="spanYesContent" class="colorboldHong"></span>&nbsp; <span id="spanNoContent"
+                                    class="colorboldlan"></span>&nbsp; <span id="spanBadContent" class="colorboldHong">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divtextalignright margintop10">
+                        <span class="detailjubao" id="infobad">举报</span>
+                    </div>
+                    <div class="margintop20bottom20">
+    <div class="divfloatleft">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- mamicode-infodetail-336x280-1 -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 336px; height: 280px"
+            data-ad-client="ca-pub-8616102841876629" data-ad-slot="6851602680"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    <div class="divfloatright">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- mamicode-infodetail-336x280-2 -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 336px; height: 280px"
+            data-ad-client="ca-pub-8616102841876629" data-ad-slot="8328335888"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    <div class="divfloatclear">
+    </div>
+</div>
+
+                    <div id="comment" class="divtextalignleft margintop20">
+                        <div class="detailpinglun1">
+                            <span class="detailpinglun2 title6">评论</span> <span class="detailpinglun3">一句话评论（<span id="commentCount" class="colorboldHong">0</span>）</span>
+                        </div>
+                        <div class="paddingtop20">
+                            
+                            <div id="commentlistend" name="commentlistend" class="divtextaligncenter margintop20">
+                                <span id="lblpage">共<span class='pagecolorc'>0</span>条&nbsp;&nbsp;</span>
+                            </div>
+                        </div>
+                        <div class="margintop20">
+                            <form method="post" action="/ajaxjs/info_detail_commentadd.aspx">
+                            <div class="divtextalignleft paddingtop20">
+                                <div id="commenthf" class="divbackgroundcolor1">
+                                </div>
+                                <div>
+                                    <textarea name="tbcommentcontent" id="tbcommentcontent" class="tb" style="width: 680px;
+                                        height: 120px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="divtextalignright paddingtop10 ">
+                                <span id="addCommentTishi" class="colorboldHong">登录后才能评论！</span>
+                                <span id="loginno"><input type="button" class="mbtn1" value="登录" onclick="location.href='http://member.mamicode.com/login.aspx?returnUrl=http://www.mamicode.com/infodetail.aspx?id=872795';" /></span>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="width30bi divfloatright">
+            
+            <div class="paddingbottom20">
+    <script type="text/javascript">        (function () { document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E')); var bdcs = document.createElement('script'); bdcs.type = 'text/javascript'; bdcs.async = true; bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=7490613033886828738' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date() / 3600000); var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bdcs, s); })();</script>
+</div>
+<div class="paddingbottom10">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- 1-mamicode-right-300x600 -->
+    <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 600px"
+        data-ad-client="ca-pub-8616102841876629" data-ad-slot="8947049888"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    <script type="text/javascript">
+        /*mamicode-infodetail-zuoyouxuanfu-120*300 创建于 2015-03-13*/
+        var cpro_id = "u1987286";
+    </script>
+    <script src="http://cpro.baidustatic.com/cpro/ui/f.js" type="text/javascript"></script>
+    <script>
+        var baiduImagePlus = {
+            noLogo: true,
+            unionId: 'u2416663',
+            formList: [{ formId: 2}]
+        };
+    </script>
+    <script src="http://cpro.baidustatic.com/cpro/ui/i.js"></script>
+</div>
+
+<div class="width100bi divborder">
+    <div class="divtitle">
+        <div id="infofile1_div1" class="divfloatleft divtitlefont">
+            分享档案</div>
+        <div class="divfloatright">
+            <a href="/infotimemore.html" title="分享档案更多" class="colorCheng">更多></a>
+        </div>
+        <div class="divfloatclear">
+        </div>
+    </div>
+    <div class="divtextalignleft paddingleft10right10 margintop10bottom10 heightline30px">
+        
+                <a class="taga" href="/info-time-20151216-1.html" target="_blank" title="2015年12月16日技术分享文章">
+                        2015年12月16日
+                        (219)</a><br />
+            
+                <a class="taga" href="/info-time-20151215-1.html" target="_blank" title="2015年12月15日技术分享文章">
+                        2015年12月15日
+                        (976)</a><br />
+            
+                <a class="taga" href="/info-time-20151214-1.html" target="_blank" title="2015年12月14日技术分享文章">
+                        2015年12月14日
+                        (1224)</a><br />
+            
+                <a class="taga" href="/info-time-20151213-1.html" target="_blank" title="2015年12月13日技术分享文章">
+                        2015年12月13日
+                        (908)</a><br />
+            
+                <a class="taga" href="/info-time-20151212-1.html" target="_blank" title="2015年12月12日技术分享文章">
+                        2015年12月12日
+                        (758)</a><br />
+            
+                <a class="taga" href="/info-time-20151211-1.html" target="_blank" title="2015年12月11日技术分享文章">
+                        2015年12月11日
+                        (1094)</a><br />
+            
+                <a class="taga" href="/info-time-20151210-1.html" target="_blank" title="2015年12月10日技术分享文章">
+                        2015年12月10日
+                        (1120)</a><br />
+            
+                <a class="taga" href="/info-time-20151209-1.html" target="_blank" title="2015年12月09日技术分享文章">
+                        2015年12月09日
+                        (1213)</a><br />
+            
+                <a class="taga" href="/info-time-20151208-1.html" target="_blank" title="2015年12月08日技术分享文章">
+                        2015年12月08日
+                        (1114)</a><br />
+            
+                <a class="taga" href="/info-time-20151207-1.html" target="_blank" title="2015年12月07日技术分享文章">
+                        2015年12月07日
+                        (1410)</a><br />
+            
+    </div>
+</div>
+
+            
+<div class="width100bi margintop20 divborder">
+    <div class="divtitle">
+        <div id="infotop2_divtitle" class="divfloatleft divtitlefont">周排行</div>
+        <div class="divfloatright">
+            <img src="/img/j01.jpg" width="14" height="14" alt="mamicode.com排行更多图片" /></div>
+        <div class="divfloatright">
+            <a href="/info-toplist-11-2-1.html" id="infotop2_amore" title="周排行更多">更多</a></div>
+        <div class="divfloatclear">
+        </div>
+    </div>
+    <div>
+        <ul>
+            <li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-1027288.html"
+                        title="郭美美、赵晓来开设赌场案9月10日开审" target="_blank">
+                        郭美美、赵晓来开设赌场案9月10日开审
+                        &nbsp;<span class="colorlan">2015-09-06</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-63266.html"
+                        title="彻底解决_OBJC_CLASS_$_某文件名&quot;, referenced from:问题（转）" target="_blank">
+                        彻底解决_OBJC_CLASS_$_某文件名&quot;, referenced from:问题（转）
+                        &nbsp;<span class="colorlan">2014-06-15</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-149397.html"
+                        title="当刷机工具遇到SetupConnection时的解决方法" target="_blank">
+                        当刷机工具遇到SetupConnection时的解决方法
+                        &nbsp;<span class="colorlan">2014-08-09</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-670846.html"
+                        title="下了个蓝屏代码查看工具，就中病毒了。。。什么鬼病毒，竟然还是用的VBS" target="_blank">
+                        下了个蓝屏代码查看工具，就中病毒了。。。什么鬼病毒，竟然还是用的VBS
+                        &nbsp;<span class="colorlan">2015-06-03</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-873243.html"
+                        title="ReLu(Rectified Linear Units)激活函数" target="_blank">
+                        ReLu(Rectified Linear Units)激活函数
+                        &nbsp;<span class="colorlan">2015-06-19</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-327339.html"
+                        title="CUDA从入门到精通" target="_blank">
+                        CUDA从入门到精通
+                        &nbsp;<span class="colorlan">2014-11-21</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-168312.html"
+                        title="dubbo管理控制台安装和使用" target="_blank">
+                        dubbo管理控制台安装和使用
+                        &nbsp;<span class="colorlan">2014-08-19</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-247448.html"
+                        title="（七）理解angular中的module和injector，即依赖注入" target="_blank">
+                        （七）理解angular中的module和injector，即依赖注入
+                        &nbsp;<span class="colorlan">2014-10-10</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-538646.html"
+                        title="十六进制转八进制" target="_blank">
+                        十六进制转八进制
+                        &nbsp;<span class="colorlan">2015-03-31</span> </a></li><li class="divullititle heightline25px divtextalignleft"><a href="/info-detail-507929.html"
+                        title="WAMPServer 默认安装启动后，图标显示橙黄色" target="_blank">
+                        WAMPServer 默认安装启动后，图标显示橙黄色
+                        &nbsp;<span class="colorlan">2015-03-10</span> </a></li>
+        </ul>
+    </div>
+</div>
+
+            <div class="margintop20">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- mamicode-300x600-pipei -->
+    <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 600px"
+        data-ad-client="ca-pub-8616102841876629" data-ad-slot="9360520689"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+<div id="xuanting" class="width300px">
+    <div class="margintop10">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- mamicode-xuanting-300x250 -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px"
+            data-ad-client="ca-pub-8616102841876629" data-ad-slot="3583171088"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    <div class="margintop10">
+        <script type="text/javascript">
+            var cpro_id = "u2208973";
+            (window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id] = { at: "3", rsi0: "300", rsi1: "300", pat: "17", tn: "baiduCustNativeAD", rss1: "#FFFFFF", conBW: "1", adp: "1", ptt: "0", titFF: "", titFS: "14", rss2: "#000000", titSU: "0" }
+        </script>
+        <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+    </div>
+</div>
+
+        </div>
+        <div class="divfloatclear">
+        </div>
+    </div>
+    <div class="width1000px divmargin0auto paddingtop20bottom20">
+    <div class="divfloatleft">
+        <script type="text/javascript">
+            var cpro_id = "u1995297";
+            (window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id] = { at: "3", rsi0: "680", rsi1: "250", pat: "6", tn: "baiduCustNativeAD", rss1: "#FFFFFF", conBW: "1", adp: "1", ptt: "0", titFF: "%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91", titFS: "14", rss2: "#000000", titSU: "0", ptbg: "90", piw: "0", pih: "0", ptp: "0" }
+        </script>
+        <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+    </div>
+    <div class="divfloatright">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- mamicode-bottom-300x250 -->
+        <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px"
+            data-ad-client="ca-pub-8616102841876629" data-ad-slot="8957115489"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    <div class="divfloatclear">
+    </div>
+</div>
+<div class="width1000px divmargin0auto paddingtop20bottom20">
+    <div class="width1000px divborder margintop20">
+        <div class="youqingtitle">
+            <a title="友情链接">友情链接</a>
+        </div>
+        <div class="youqingcontent">
+            <a href='http://www.guozhihua.net/' target='_blank'>国之画</a>&nbsp;&nbsp;<a href='http://tongji.baidu.com'
+                target='_blank'>百度统计</a>&nbsp;&nbsp; <a href='http://www.cnzz.com/' target='_blank'>
+                    站长统计</a>&nbsp;&nbsp;<a href='http://www.aliyun.com/' target='_blank'>阿里云</a>&nbsp;&nbsp;
+        </div>
+    </div>
+</div><div class="bottomdiv">
+    <div class="width1000px divmargin0auto paddingtop20">
+        <div class="height30px divtextalignleft">
+            <a href="/about.html" title="mamicode.com关于我们">关于我们</a> - <a href="/contactus.html"
+                title="mamicode.com联系我们">联系我们</a> - <a href="/guest.html" title="mamicode.com留言反馈">留言反馈</a>
+        </div>
+        <div class="height30px divtextalignleft">
+            © 2014 <a href="http://www.mamicode.com" target="_blank" title="mamicode.com,技术分享">mamicode.com</a>
+            版权所有 京ICP备13008772号-2
+        </div>
+        <div class="divtextalignleft">
+            <span class="colorlan">迷上了代码！</span>
+        </div>
+        <div class="paddingtop20">
+            <script type="text/javascript">                var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://"); document.write(unescape("%3Cspan id='cnzz_stat_icon_1254666564'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1254666564%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <script type="text/javascript">
+                var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+                document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fb65e01a9bac157f881c4d8cbac4b6995' type='text/javascript'%3E%3C/script%3E"));
+            </script>
+        </div>
+        <br />
+        <br />
+        <br />
+    </div>
+</div>
+<script type="text/javascript" src="/js/mamicodejs.js"></script>
+
+    <script type="text/javascript">        var mid = ''; var id = '872795'; var idm = 'da0380'; var commentitemcount = '0'; var memberhost = 'http://member.mamicode.com/'; prettyPrint(); </script>  
+    <script src="/js/infodetail.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/member.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
